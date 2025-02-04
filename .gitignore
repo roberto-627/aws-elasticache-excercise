@@ -1,0 +1,39 @@
+# -------------------------------------------------------------------
+# Terraform-specific files and directories
+# -------------------------------------------------------------------
+# The .terraform directory holds downloaded modules and providers
+.terraform/
+
+# The Terraform state files and backups contain potentially sensitive info
+*.tfstate
+*.tfstate.*
+
+# Crash log files
+crash.log
+
+# Terraform plan output files (if you ever save them)
+*.tfplan
+
+# Automatically generated lock file for providers
+.terraform.lock.hcl
+
+# -------------------------------------------------------------------
+# Environment-specific or personal overrides
+# -------------------------------------------------------------------
+# Typically used to store sensitive variables (like passwords) or env-specific overrides
+*.tfvars
+*.tfvars.json
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# -------------------------------------------------------------------
+# Logs, local config, and other ephemeral files
+# -------------------------------------------------------------------
+*.log
+*.swp
+*.bak
+*.tmp
+.DS_Store
+Thumbs.db

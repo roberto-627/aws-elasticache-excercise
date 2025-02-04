@@ -84,8 +84,7 @@ When you deploy this module, it creates:
 
    ```hcl
    module "redis_cluster" {
-     source  = "github.com/your-organization/your-repo.git?ref=main"
-     # or a versioned release, e.g. ?ref=v1.0.0
+     source  = "github.com/roberto-627/aws-elasticache-excercise.git?ref=main"
 
      replication_group_id          = "my-redis-rg"
      replication_group_description = "Redis replication group"
@@ -119,14 +118,16 @@ When you deploy this module, it creates:
      }
    }
 
-2. Initialize and apply with Terraform:
+2. Make sure you specify the aws profile in the provider.tf file.
+
+3. Initialize and apply with Terraform:
 
     ```bash
     terraform init
     terraform plan
     terraform apply
 
-3. Verify that the ElastiCache cluster is up and running in your AWS Console.
+4. Verify that the ElastiCache cluster is up and running in your AWS Console.
 
 ---
 
@@ -140,6 +141,7 @@ When you deploy this module, it creates:
 
 | Variable                        | Type                                              | Default                                    | Description                                                                                                        |
 |--------------------------------|---------------------------------------------------|--------------------------------------------|--------------------------------------------------------------------------------------------------------------------|
+| `region`          | `string`                                          | `"us-east-1"`                           | Provider region to deploy resources
 | `replication_group_id`          | `string`                                          | `"my-redis-rg"`                           | Identifier for the replication group                                                                               |
 | `replication_group_description` | `string`                                          | `"Redis replication"`                      | Description for the replication group                                                                              |
 | `engine`                        | `string`                                          | `"redis"`                                  | The Redis engine                                                                                                   |

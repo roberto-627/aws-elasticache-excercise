@@ -1,3 +1,9 @@
+variable "region" {
+  type        = string
+  description = "Provider region to deploy resources"
+  default     = "us-east-1"
+}
+
 variable "replication_group_id" {
   type        = string
   description = "Identifier for the replication group"
