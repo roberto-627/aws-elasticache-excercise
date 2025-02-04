@@ -153,7 +153,7 @@ variable "parameter_group_description" {
 }
 
 variable "parameter_overrides" {
-  type        = list(object({
+  type = list(object({
     name  = string
     value = string
   }))

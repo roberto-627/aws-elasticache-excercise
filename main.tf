@@ -9,12 +9,12 @@ resource "aws_security_group" "this" {
   # By default, deny all inbound, allow outbound. 
   # Adjust as needed or configure ingress rules.
   ingress {
-    description      = "Allow inbound from trusted CIDRs or SGs"
-    from_port        = var.port
-    to_port          = var.port
-    protocol         = "tcp"
-    cidr_blocks      = var.ingress_cidr_blocks
-    security_groups  = var.ingress_security_groups
+    description     = "Allow inbound from trusted CIDRs or SGs"
+    from_port       = var.port
+    to_port         = var.port
+    protocol        = "tcp"
+    cidr_blocks     = var.ingress_cidr_blocks
+    security_groups = var.ingress_security_groups
   }
 
   egress {
@@ -45,7 +45,13 @@ resource "aws_elasticache_parameter_group" "this" {
   family      = var.parameter_group_family
   description = var.parameter_group_description
 
-  parameters = var.parameter_overrides
+  dynamic "parameter" {
+    for_each = var.parameter_overrides
+    content {
+      name  = parameter.value.name
+      value = parameter.value.value
+    }
+  }
 
   tags = var.tags
 }
@@ -56,28 +62,28 @@ resource "aws_elasticache_parameter_group" "this" {
 #   - Automatic failover for high availability
 ############################################################
 resource "aws_elasticache_replication_group" "this" {
-  replication_group_id          = var.replication_group_id
-  replication_group_description = var.replication_group_description
+  replication_group_id = var.replication_group_id
+  description          = var.replication_group_description
 
-  engine          = var.engine
-  engine_version  = var.engine_version
+  engine               = var.engine
+  engine_version       = var.engine_version
   parameter_group_name = aws_elasticache_parameter_group.this.name
 
   # Sharding / Cluster Mode
-  cluster_mode_enabled = var.cluster_mode_enabled
-  # The following options apply only when cluster_mode_enabled = true
-  number_cache_clusters   = var.cluster_mode_enabled ? null : var.num_cache_clusters
-  node_group_configuration {
-    primary_availability_zone = var.primary_availability_zone
-    replica_availability_zones = var.replica_availability_zones
-    replica_count = var.replicas_per_node_group
+  dynamic "cluster_mode" {
+    for_each = var.cluster_mode_enabled ? [1] : []
+    content {
+      num_node_groups         = var.num_node_groups
+      replicas_per_node_group = var.replicas_per_node_group
+    }
   }
-  num_node_groups          = var.num_node_groups
-  replicas_per_node_group  = var.replicas_per_node_group
+
+  num_node_groups         = var.num_node_groups
+  replicas_per_node_group = var.replicas_per_node_group
 
   # Subnet group & Security group
-  subnet_group_name       = aws_elasticache_subnet_group.this.name
-  security_group_ids      = [aws_security_group.this.id]
+  subnet_group_name  = aws_elasticache_subnet_group.this.name
+  security_group_ids = [aws_security_group.this.id]
 
   # Failover
   automatic_failover_enabled = var.automatic_failover_enabled
@@ -90,8 +96,8 @@ resource "aws_elasticache_replication_group" "this" {
   maintenance_window = var.maintenance_window
 
   # At-rest Encryption & Transit Encryption
-  at_rest_encryption_enabled    = var.at_rest_encryption_enabled
-  transit_encryption_enabled    = var.transit_encryption_enabled
+  at_rest_encryption_enabled = var.at_rest_encryption_enabled
+  transit_encryption_enabled = var.transit_encryption_enabled
 
   # Monitoring
   # (ElastiCache automatically publishes metrics to CloudWatch. Optionally, 
